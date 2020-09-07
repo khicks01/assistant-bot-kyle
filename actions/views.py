@@ -10,22 +10,18 @@ def event_hook(request):
     json_dict = json.loads(request.body.decode('utf-8'))
     if json_dict['token'] != settings.VERIFICATION_TOKEN:
         return HttpResponse(status=403)
-
     if 'type' in json_dict:
         if json_dict['type'] == 'url_verification':
             response_dict = {"challenge": json_dict['challenge']}
             return JsonResponse(response_dict, safe=False)
-    
     if 'event' in json_dict:
         event_msg = json_dict['event']
-        print(event_msg)
-
         if event_msg['type'] == 'message':
             user = event_msg['user']
+            thread_value = event_msg['thread_ts']
             if(user != 'U01ACS227RS'):
                 channel = event_msg['channel']
-                response_msg = "payload: <@%s>" % event_msg
-                client.chat_postMessage(channel=channel, text=response_msg)
+                response_msg = "I hear you"
+                client.chat_postMessage(channel=channel, thread_ts= thread_value, text=response_msg)
                 return HttpResponse(status=200)
-
     return HttpResponse(status=200)
