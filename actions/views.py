@@ -19,10 +19,9 @@ def event_hook(request):
     if 'event' in json_dict:
         event_msg = json_dict['event']
 
-        if ('subtype' in event_msg) and (event_msg['subtype'] == 'bot_message'):
-            return HttpResponse(status=200)
-
         if event_msg['type'] == 'message':
+            if ('subtype' in event_msg) and (event_msg['subtype'] == 'bot_message'):
+                return HttpResponse(status=200)
             user = event_msg['user']
             channel = event_msg['channel']
             response_msg = ":wave:, Hello <@%s>" % user
