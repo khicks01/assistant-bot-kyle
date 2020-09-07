@@ -31,16 +31,16 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 #Slack Credentials
-VERIFICATION_TOKEN = '********'
-OAUTH_ACCESS_TOKEN = '************'
-BOT_USER_ACCESS_TOKEN = '****-******-******'
-CLIENT_ID = '**********'
-CLIENT_SECRET = '******'
+VERIFICATION_TOKEN = os.environ['VERIFICATION_TOKEN']
+OAUTH_ACCESS_TOKEN = os.environ['OAUTH_ACCESS_TOKEN']
+BOT_USER_ACCESS_TOKEN = os.environ['BOT_USER_ACCESS_TOKEN']
+CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
 
 # Application definition
 
 INSTALLED_APPS = [
-    'actions'
+    'actions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
