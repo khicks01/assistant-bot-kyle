@@ -25,16 +25,18 @@ def event_hook(request):
         event_msg = json_dict['event']
         if event_msg['type'] == 'message':
             user = event_msg['user']
-            message_timestamp = event_msg['ts']
             #Make sure the post is not coming from the bot itself
             if(user != 'U01ACS227RS'):
+                message_timestamp = event_msg['ts']
                 channel = event_msg['channel']
-                obj, created = SlackPost.objects.get_or_create(user_request= event_msg['text'].lower())
+                text = event_msg['text'].lower()
+                query_response = keyword_check(text)
+                obj, created = SlackPost.objects.get_or_create(user_request= text)
                 if(created):
                     response_msg = "I added this request to the database"
                 else:
                     response_msg = "Already part of the database"
-                client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
+                client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=query_response)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
 
@@ -46,7 +48,7 @@ def keyword_check(message_text):
         for keyword in message_array:
             if keyword in db.keywords:
                 match_found = True
-                return str(db[keyword].resource)
+                return str("check this resource for help: "+ db[keyword].resource)
         return("We dont have a resource for that, sorry")
     
 
