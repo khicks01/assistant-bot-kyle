@@ -10,3 +10,6 @@ class SlackPost(models.Model):
 class AnswersDatabase(models.Model):
     keywords = models.TextField()
     resource = models.URLField()
+    def __str__(self):
+        return str(self.resource)
+    
