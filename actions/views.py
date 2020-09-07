@@ -30,7 +30,6 @@ def event_hook(request):
             if(user != 'U01ACS227RS'):
                 channel = event_msg['channel']
                 new_db_entry = SlackPost()
-                new_db_entry.time_stamp = message_timestamp
                 new_db_entry.user = user
                 new_db_entry.user_request = event_msg['text']
                 new_db_entry.save()
