@@ -29,10 +29,12 @@ def event_hook(request):
                 channel = event_msg['channel']
                 new_db_entry.time_stamp = message_timestamp
                 new_db_entry.user = user
-                if(new_db_entry.objects.filter(user_requests = event_msg['text'])):
+                if(new_db_entry.objects.filter(user_requests = event_msg['text'])).exists():
+                    response_msg = "Someone has already asked this question"
+                else:    
                     new_db_entry.user_request = event_msg['text']
                     new_db_entry.save()
                     response_msg = "I added this request to the database"
-                    client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
+                client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
