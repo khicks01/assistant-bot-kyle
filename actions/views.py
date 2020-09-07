@@ -29,11 +29,11 @@ def event_hook(request):
             #Make sure the post is not coming from the bot itself
             if(user != 'U01ACS227RS'):
                 channel = event_msg['channel']
-                new_db_entry = SlackPost()
-                new_db_entry.user = user
-                new_db_entry.user_request = event_msg['text']
-                new_db_entry.save()
-                response_msg = "I added this request to the database"
+                obj, created = SlackPost.objects.get_or_create(user_request= event_msg['text'].lower())
+                if(created):
+                    response_msg = "I added this request to the database"
+                else:
+                    response_msg = "Already part of the database"
                 client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
