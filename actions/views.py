@@ -22,7 +22,6 @@ def event_hook(request):
             if(user != 'U01ACS227RS'):
                 channel = event_msg['channel']
                 response_msg = "I hear you"
-                client.conversations_replies(channel= channel, ts= message_timestamp,text=response_msg )
-                #client.chat_postMessage(channel=channel, thread_ts= thread_value, text=response_msg)
+                client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
