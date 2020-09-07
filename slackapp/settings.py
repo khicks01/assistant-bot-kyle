@@ -31,11 +31,11 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 #Slack Credentials
-VERIFICATION_TOKEN = os.environ['VERIFICATION_TOKEN']
-OAUTH_ACCESS_TOKEN = os.environ['OAUTH_ACCESS_TOKEN']
-BOT_USER_ACCESS_TOKEN = os.environ['BOT_USER_ACCESS_TOKEN']
-CLIENT_ID = os.environ['CLIENT_ID']
-CLIENT_SECRET = os.environ['CLIENT_SECRET']
+VERIFICATION_TOKEN = os.environ.get('VERIFICATION_TOKEN')
+OAUTH_ACCESS_TOKEN = os.environ.get('OAUTH_ACCESS_TOKEN')
+BOT_USER_ACCESS_TOKEN = os.environ.get('BOT_USER_ACCESS_TOKEN')
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
 # Application definition
 
