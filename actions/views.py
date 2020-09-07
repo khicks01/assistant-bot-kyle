@@ -22,11 +22,11 @@ def event_hook(request):
         if ('subtype' in event_msg) and (event_msg['subtype'] == 'bot_message'):
             return HttpResponse(status=200)
 
-    if event_msg['type'] == 'message':
-        user = event_msg['user']
-        channel = event_msg['channel']
-        response_msg = ":wave:, Hello <@%s>" % user
-        client.chat_postMessage(channel=channel, text=response_msg)
-        return HttpResponse(status=200)
+        if event_msg['type'] == 'message':
+            user = event_msg['user']
+            channel = event_msg['channel']
+            response_msg = ":wave:, Hello <@%s>" % user
+            client.chat_postMessage(channel=channel, text=response_msg)
+            return HttpResponse(status=200)
 
     return HttpResponse(status=200)
