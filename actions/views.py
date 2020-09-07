@@ -18,13 +18,14 @@ def event_hook(request):
 
     if 'event' in json_dict:
         event_msg = json_dict['event']
+        print(event_msg)
 
         if event_msg['type'] == 'message':
-            if ('subtype' in event_msg) and (event_msg['subtype'] == 'bot_message'):
-                return HttpResponse(status=200)
             user = event_msg['user']
+            if(user == 'AssistantBot'):
+                return HttpResponse(status=200)
             channel = event_msg['channel']
-            response_msg = ":wave:, Hello <@%s>" % user
+            response_msg = "payload: <@%s>" % event_msg
             client.chat_postMessage(channel=channel, text=response_msg)
             return HttpResponse(status=200)
 
