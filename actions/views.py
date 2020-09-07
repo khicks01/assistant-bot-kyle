@@ -30,6 +30,7 @@ def event_hook(request):
                 new_db_entry.time_stamp = message_timestamp
                 new_db_entry.user = user
                 new_db_entry.user_request = event_msg['text']
+                new_db_entry.save()
                 response_msg = "I added this request to the database"
                 client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
                 return HttpResponse(status=200)
