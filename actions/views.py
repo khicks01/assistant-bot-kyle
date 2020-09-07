@@ -25,9 +25,10 @@ def event_hook(request):
 
         if event_msg['type'] == 'message':
             user = event_msg['user']
-            channel = event_msg['channel']
-            response_msg = "payload: <@%s>" % event_msg
-            client.chat_postMessage(channel=channel, text=response_msg)
-            return HttpResponse(status=200)
+            if(user != U01ACS227RS):
+                channel = event_msg['channel']
+                response_msg = "payload: <@%s>" % event_msg
+                client.chat_postMessage(channel=channel, text=response_msg)
+                return HttpResponse(status=200)
 
     return HttpResponse(status=200)
