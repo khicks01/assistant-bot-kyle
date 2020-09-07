@@ -5,7 +5,7 @@ from django.conf import settings
 import json
 import slack
 
-from .models import SlackPost
+from .models import SlackPost, AnswersDatabase
 
 
 
@@ -37,3 +37,17 @@ def event_hook(request):
                 client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
+
+def keyword_check(message_text):
+    message_array = message_text.split(" ")
+    db = AnswersDatabase.objects.all()
+    match_found = False
+    while not match_found:
+        for keyword in message_array:
+            if keyword in db.keywords:
+                match_found = True
+                return str(db[keyword].resource)
+        return("We dont have a resource for that, sorry")
+    
+
+
