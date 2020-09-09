@@ -35,6 +35,11 @@ def event_hook(request):
                 print(words)
                 try:
                     for each_word in words:
+                        print(each_word)
+                        for a in AnswersDatabase.objects.all():
+                            print(a.keywords)
+                            each_keyword = a.keywords.split(" ")
+                            print(each_keyword)
                         helpful_links = AnswersDatabase.objects.get(keywords__icontains = str(each_word))
                         for result in helpful_links:
                             answer_msg.append(str(result.resource))
@@ -50,7 +55,7 @@ def event_hook(request):
                 client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
 
                 # answer given by bot
-                if not answer_msg:
+                if len(answer_msg) != 0:
                     client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=answer_msg)
                 else:
                     answer_msg = "We didn't find a helpful link for your query, sorry"
