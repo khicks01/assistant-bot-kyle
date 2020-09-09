@@ -32,15 +32,9 @@ def event_hook(request):
                 text = event_msg['text'].lower().strip()
                 words = text.split(" ")
                 answer_msg = []
-                print(words)
-                
                 for each_word in words:
                     try:
                         print(each_word)
-                        for a in AnswersDatabase.objects.all():
-                            print(a.keywords)
-                            each_keyword = a.keywords.split(" ")
-                            print(each_keyword)
                         helpful_links = AnswersDatabase.objects.get(keywords__icontains = str(each_word))
                         for result in helpful_links:
                             answer_msg.append(str(result.resource))
