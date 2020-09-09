@@ -29,27 +29,19 @@ def event_hook(request):
             if(user != 'U01ACS227RS'):
                 message_timestamp = event_msg['ts']
                 channel = event_msg['channel']
-                text = event_msg['text'].lower()
-                query_response = keyword_check(text)
+                text = event_msg['text'].lower().strip()
+                words = text.split(" ")
+                answer_msg = []
+                for each_word in words:
+                    helpful_links = AnswersDatabase.objects.get(keywords__icontains = each_word)
+                    for link in helpful_links:
+                        answer_msg.append(link.resource)
                 obj, created = SlackPost.objects.get_or_create(user_request= text)
                 if(created):
-                    response_msg = "I added this request to the database"
+                    response_msg = "I added this request to the request database"
                 else:
                     response_msg = "Already part of the database"
-                client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=query_response)
+                client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
+                client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=answer_msg)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
-
-def keyword_check(message_text):
-    message_array = message_text.split(" ")
-    db = AnswersDatabase.objects.all()
-    match_found = False
-    while not match_found:
-        for keyword in message_array:
-            if keyword in db.keywords:
-                match_found = True
-                return str("check this resource for help: "+ db[keyword].resource)
-        return("We dont have a resource for that, sorry")
-    
-
-
