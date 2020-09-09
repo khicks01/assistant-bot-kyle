@@ -35,7 +35,7 @@ def event_hook(request):
                 for each_word in words:
                     try:
                         print(each_word)
-                        helpful_links = AnswersDatabase.objects.get(keywords__icontains = str(each_word))
+                        helpful_links = AnswersDatabase.objects.get(keywords__icontains = '{each_word}')
                         for result in helpful_links:
                             answer_msg.append(str(result.resource))
                     except:
