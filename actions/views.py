@@ -33,8 +33,9 @@ def event_hook(request):
                 words = text.split(" ")
                 answer_msg = []
                 print(words)
-                try:
-                    for each_word in words:
+                
+                for each_word in words:
+                    try:
                         print(each_word)
                         for a in AnswersDatabase.objects.all():
                             print(a.keywords)
@@ -43,8 +44,8 @@ def event_hook(request):
                         helpful_links = AnswersDatabase.objects.get(keywords__icontains = str(each_word))
                         for result in helpful_links:
                             answer_msg.append(str(result.resource))
-                except:
-                    print("no value found")
+                    except:
+                        print("no value found")
                 
                 #message receipt and logging
                 obj, created = SlackPost.objects.get_or_create(user_request= text)
