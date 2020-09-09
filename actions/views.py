@@ -33,15 +33,13 @@ def event_hook(request):
                 words = text.split(" ")
                 answer_msg = []
                 print(words)
-                for e in AnswersDatabase.objects.all():
-                    print(e.keywords)
-                # try:
-                #     for each_word in words:
-                #         helpful_links = AnswersDatabase.objects.get(keywords__icontains = each_word)
-                #         for link in helpful_links:
-                #             answer_msg.append(link.resource)
-                # except:
-                #     print("no value found")
+                try:
+                    for each_word in words:
+                        helpful_links = AnswersDatabase.objects.get(keywords__icontains = str(each_word))
+                        for result in helpful_links:
+                            answer_msg.append(str(result.resource))
+                except:
+                    print("no value found")
                 
                 #message receipt and logging
                 obj, created = SlackPost.objects.get_or_create(user_request= text)
@@ -50,6 +48,12 @@ def event_hook(request):
                 else:
                     response_msg = "Already part of the database"
                 client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=response_msg)
-                #client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=answer_msg)
+
+                # answer given by bot
+                if not answer_msg:
+                    client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=answer_msg)
+                else:
+                    answer_msg = "We didn't find a helpful link for your query, sorry"
+                    client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=answer_msg)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
