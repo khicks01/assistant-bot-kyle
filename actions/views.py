@@ -37,7 +37,7 @@ def event_hook(request):
                         print(each_word)
                         helpful_links = AnswersDatabase.objects.get(keywords__icontains=each_word)
                         print(helpful_links)
-                        answer_msg.append(str(helpful_links.resource).decode('unicode_escape'))
+                        answer_msg.append(helpful_links.resource)
                     except:
                         print("no value found")
                 
