@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.core import exceptions
 import json
 import slack
 
@@ -14,12 +15,7 @@ def event_hook(request):
     client = slack.WebClient(token=settings.BOT_USER_ACCESS_TOKEN)
     json_dict = json.loads(request.body.decode('utf-8'))
     #check if this is a verification challenge
-    if json_dict['token'] != settings.VERIFICATION_TOKEN:
-        return HttpResponse(status=403)
-    if 'type' in json_dict:
-        if json_dict['type'] == 'url_verification':
-            response_dict = {"challenge": json_dict['challenge']}
-            return JsonResponse(response_dict, safe=False)
+    event_sub_challenge_check(json_dict, request)
     #if this is a normal event which the bot is subscribed to
     if 'event' in json_dict:
         event_msg = json_dict['event']
@@ -39,7 +35,7 @@ def event_hook(request):
                         print(helpful_links)
                         if helpful_links.resource not in answer_msg:
                             answer_msg.append(helpful_links.resource)
-                    except:
+                    except AnswersDatabase.DoesNotExist:
                         print("no value found")
                 
                 #message receipt and logging
@@ -58,3 +54,12 @@ def event_hook(request):
                     client.chat_postMessage(channel=channel, thread_ts= message_timestamp, text=answer_msg)
                 return HttpResponse(status=200)
     return HttpResponse(status=200)
+
+def event_sub_challenge_check(json_dict, request):
+    json_dict = json.loads(request.body.decode('utf-8'))
+    if json_dict['token'] != settings.VERIFICATION_TOKEN:
+        return HttpResponse(status=403)
+    if 'type' in json_dict:
+        if json_dict['type'] == 'url_verification':
+            response_dict = {"challenge": json_dict['challenge']}
+            return JsonResponse(response_dict, safe=False)
