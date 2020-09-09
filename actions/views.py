@@ -42,6 +42,7 @@ def respond_to_subscription_challenge(json_dict, request):
             response_dict = {"challenge": json_dict['challenge']}
             return JsonResponse(response_dict, safe=False)
 def find_helpful_links(user_request_keyword_array, answer_list):
+    #TODO - exclude single letter searches, and catch MultipleObjectsReturned
     for each_word in user_request_keyword_array:
         try:
             print(each_word)
@@ -66,4 +67,3 @@ def gather_message_data(message_json):
     return message_timestamp, channel, text
 
 
-    

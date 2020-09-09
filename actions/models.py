@@ -8,8 +8,16 @@ class SlackPost(models.Model):
         return str(self.user_request)
 
 class AnswersDatabase(models.Model):
+    context = models.TextField()
     keywords = models.TextField()
-    resource = models.URLField()
+    resource = models.TextField()
     def __str__(self):
-        return str(self.resource)
+        return str(self.context)
+
+class Topics(models.Model):
+    context = models.TextField()
+    aliases = models.TextField()
+    def __str__(self):
+        return str(self.context)
+
     
