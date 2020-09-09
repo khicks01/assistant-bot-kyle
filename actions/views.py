@@ -32,7 +32,7 @@ def event_hook(request):
                 text = event_msg['text'].lower().strip()
                 words = text.split(" ")
                 answer_msg = []
-                print("incomming message words:" +words)
+                print(words)
                 for e in AnswersDatabase.objects.all():
                     print(e.keywords)
                 # try:
