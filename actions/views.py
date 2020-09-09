@@ -37,7 +37,8 @@ def event_hook(request):
                         print(each_word)
                         helpful_links = AnswersDatabase.objects.get(keywords__icontains=each_word)
                         print(helpful_links)
-                        answer_msg.append(helpful_links.resource)
+                        if helpful_links.resource not in answer_msg:
+                            answer_msg.append(helpful_links.resource)
                     except:
                         print("no value found")
                 
