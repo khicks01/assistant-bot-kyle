@@ -32,10 +32,14 @@ def event_hook(request):
                 text = event_msg['text'].lower().strip()
                 words = text.split(" ")
                 answer_msg = []
-                for each_word in words:
-                    helpful_links = AnswersDatabase.objects.get(keywords__icontains = each_word)
-                    for link in helpful_links:
-                        answer_msg.append(link.resource)
+                print(words)
+                try:
+                    for each_word in words:
+                        helpful_links = AnswersDatabase.objects.get(keywords__icontains = each_word)
+                        for link in helpful_links:
+                            answer_msg.append(link.resource)
+                except:
+                    print("no value found")
                 obj, created = SlackPost.objects.get_or_create(user_request= text)
                 if(created):
                     response_msg = "I added this request to the request database"
