@@ -44,7 +44,7 @@ def respond_to_subscription_challenge(json_dict, request):
         if json_dict['type'] == 'url_verification':
             response_dict = {"challenge": json_dict['challenge']}
             return JsonResponse(response_dict, safe=False)
-def find_helpful_links(found_topics, user_request_array, answer_list):
+def find_helpful_links(found_topics, user_request_array):
     #TODO - exclude single letter searches, and catch MultipleObjectsReturned
     answer_list = []
     for each_word in user_request_array:
