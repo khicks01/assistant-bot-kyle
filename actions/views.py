@@ -53,10 +53,10 @@ def find_helpful_links(found_topics, user_request_array):
                     print(each_word)
                     answer_querySet = AnswersDatabase.objects.filter(context__icontains=each_topic.strip()).filter(keywords__icontains=each_word.strip())
                     print(answer_querySet)
-                    print(len(answer_querySet))
                     if len(answer_querySet) > 0:
-                        if answer_querySet.resource not in answer_list:
-                            answer_list.append(answer_querySet.resource)
+                        for answer in answer_querySet:
+                            if answer.resource not in answer_list:
+                                answer_list.append(answer_querySet.resource)
                 except AnswersDatabase.DoesNotExist:
                     print("no value found")
     return answer_list
@@ -78,9 +78,11 @@ def find_topics(post_text_array):
         try:
             if len(word) > 1:
                 topic_querySet = Topics.objects.get(aliases__icontains=word.strip())
-                if topic_querySet.context not in found_topics:
-                    found_topics.append(topic_querySet.context)
-                    print(found_topics)
+                if len(topic_querySet) > 0:
+                    for each_topic in topic_querySet:
+                        if each_topic.context not in found_topics:
+                            found_topics.append(topic_querySet.context)
+            print(found_topics)
         except Topics.DoesNotExist:
             print("no topic found")
     return found_topics
