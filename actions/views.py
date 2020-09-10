@@ -24,7 +24,8 @@ def event_hook(request):
                 message_timestamp, channel, text = gather_message_data(event_msg)
                 words = text.split(" ")
                 #log the user question
-                SlackPost.objects.get_or_create(user_request= text.strip())
+                if len(text.strip()) >4:
+                    SlackPost.objects.get_or_create(user_request= text.strip())
                 #look for topic nouns
                 found_topics = find_topics(words)
                 if len(found_topics) > 0:
