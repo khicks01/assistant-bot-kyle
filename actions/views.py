@@ -32,7 +32,7 @@ def event_hook(request):
                     answer_msg = find_helpful_links(found_topics, words)
                     # answer given by bot
                     if len(answer_msg) > 0:
-                        respond_from_bot(answer_msg, str(found_topics[0]), client, channel, message_timestamp)
+                        respond_from_bot(answer_msg, str(found_topics), client, channel, message_timestamp)
     return HttpResponse(status=200)
 
 def respond_to_subscription_challenge(json_dict, request):
@@ -62,10 +62,10 @@ def find_helpful_links(found_topics, user_request_array):
     return answer_list
 def respond_from_bot(bot_answer, topic, slack_client, slack_channel, time_stamp):
     if len(bot_answer) != 0:
-        slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text="Context recognized: {topic}")
+        slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text="Context recognized: "+ topic)
         slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text=bot_answer)
     else:
-        answer_msg = "We didn't find a helpful link for your question regarding {topic}, sorry."
+        answer_msg = "We didn't find a helpful link for your question regarding "+ topic + " sorry."
         slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text=answer_msg)
     return HttpResponse(status=200)
 def gather_message_data(message_json):
