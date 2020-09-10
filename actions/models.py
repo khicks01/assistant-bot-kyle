@@ -13,11 +13,17 @@ class AnswersDatabase(models.Model):
     resource = models.TextField()
     def __str__(self):
         return str(self.context)
+    
+    def __len__(self):
+        return len(self.context)
 
 class Topics(models.Model):
     context = models.TextField()
     aliases = models.TextField()
     def __str__(self):
         return str(self.context)
+        
+    def __len__(self):
+        return len(self.context)
 
     
