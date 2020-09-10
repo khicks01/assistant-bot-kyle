@@ -46,18 +46,19 @@ def respond_to_subscription_challenge(json_dict, request):
 def find_helpful_links(found_topics, user_request_array):
     #TODO - exclude single letter searches, and catch MultipleObjectsReturned
     answer_list = []
-    for each_word in user_request_array:
-        if len(each_word) >1 :
-            try:
-                print(each_word)
-                answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics.strip()).filter(keywords__icontains=each_word.strip())
-                print(answer_querySet)
-                print(len(answer_querySet))
-                if len(answer_querySet) > 0:
-                    if answer_querySet.resource not in answer_list:
-                        answer_list.append(answer_querySet.resource)
-            except AnswersDatabase.DoesNotExist:
-                print("no value found")
+    for each_topic in found_topics:
+        for each_word in user_request_array:
+            if len(each_word) >1 :
+                try:
+                    print(each_word)
+                    answer_querySet = AnswersDatabase.objects.filter(context__icontains=each_topic.strip()).filter(keywords__icontains=each_word.strip())
+                    print(answer_querySet)
+                    print(len(answer_querySet))
+                    if len(answer_querySet) > 0:
+                        if answer_querySet.resource not in answer_list:
+                            answer_list.append(answer_querySet.resource)
+                except AnswersDatabase.DoesNotExist:
+                    print("no value found")
     return answer_list
 def respond_from_bot(bot_answer, topic, slack_client, slack_channel, time_stamp):
     if len(bot_answer) != 0:
