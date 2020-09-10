@@ -26,7 +26,7 @@ def event_hook(request):
                 message_timestamp, channel, text = gather_message_data(event_msg)
                 words = text.split(" ")
                 #log the user question
-                SlackPost.objects.get_or_create(user_request= text)
+                SlackPost.objects.get_or_create(user_request= text.strip())
                 #look for topic nouns
                 found_topics = find_topics(words)
                 if len(found_topics) > 0:
@@ -52,8 +52,9 @@ def find_helpful_links(found_topics, user_request_array):
             print(each_word)
             answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics).filter(keywords__icontains=each_word)
             print(answer_querySet)
-            if answer_querySet.resource not in answer_list:
-                answer_list.append(answer_querySet.resource)
+            if answer_querySet is not None:
+                if answer_querySet.resource not in answer_list:
+                    answer_list.append(answer_querySet.resource)
         except AnswersDatabase.DoesNotExist:
             print("no value found")
     return answer_list
