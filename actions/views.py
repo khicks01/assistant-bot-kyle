@@ -78,10 +78,9 @@ def find_topics(post_text_array):
         try:
             if len(word) > 1:
                 topic_querySet = Topics.objects.get(aliases__icontains=word.strip())
-                if len(topic_querySet) > 0:
-                    for each_topic in topic_querySet:
-                        if each_topic.context not in found_topics:
-                            found_topics.append(topic_querySet.context)
+                for each_topic in topic_querySet:
+                    if each_topic.context not in found_topics:
+                        found_topics.append(topic_querySet.context)
             print(found_topics)
         except Topics.DoesNotExist:
             print("no topic found")
