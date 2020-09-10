@@ -51,7 +51,7 @@ def find_helpful_links(found_topics, user_request_array):
         try:
             print(each_word)
             answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics).filter(keywords__icontains=each_word)
-            print(answer)
+            print(answer_querySet)
             if answer_querySet.resource not in answer_list:
                 answer_list.append(answer_querySet.resource)
         except AnswersDatabase.DoesNotExist:
