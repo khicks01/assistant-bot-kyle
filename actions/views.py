@@ -8,8 +8,6 @@ import slack
 
 from .models import SlackPost, AnswersDatabase, Topics
 
-
-
 @csrf_exempt
 def event_hook(request):
     client = slack.WebClient(token=settings.BOT_USER_ACCESS_TOKEN)
@@ -30,12 +28,14 @@ def event_hook(request):
                 #look for topic nouns
                 found_topics = find_topics(words)
                 if len(found_topics) > 0:
+                    print(found_topics)
                     #build array of helpful links based on the key word
                     answer_msg = find_helpful_links(found_topics, words)
                     # answer given by bot
                     if len(answer_msg) > 0:
                         respond_from_bot(answer_msg, str(found_topics[0]), client, channel, message_timestamp)
     return HttpResponse(status=200)
+
 def respond_to_subscription_challenge(json_dict, request):
     json_dict = json.loads(request.body.decode('utf-8'))
     if json_dict['token'] != settings.VERIFICATION_TOKEN:
@@ -48,16 +48,17 @@ def find_helpful_links(found_topics, user_request_array):
     #TODO - exclude single letter searches, and catch MultipleObjectsReturned
     answer_list = []
     for each_word in user_request_array:
-        try:
-            print(each_word)
-            answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics).filter(keywords__icontains=each_word)
-            print(answer_querySet)
-            print(len(answer_querySet))
-            if len(answer_querySet) > 0:
-                if answer_querySet.resource not in answer_list:
-                    answer_list.append(answer_querySet.resource)
-        except AnswersDatabase.DoesNotExist:
-            print("no value found")
+        if len(each_word) >1 :
+            try:
+                print(each_word)
+                answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics).filter(keywords__icontains=each_word)
+                print(answer_querySet)
+                print(len(answer_querySet))
+                if len(answer_querySet) > 0:
+                    if answer_querySet.resource not in answer_list:
+                        answer_list.append(answer_querySet.resource)
+            except AnswersDatabase.DoesNotExist:
+                print("no value found")
     return answer_list
 def respond_from_bot(bot_answer, topic, slack_client, slack_channel, time_stamp):
     if len(bot_answer) != 0:
@@ -75,9 +76,10 @@ def find_topics(post_text_array):
     found_topics = []
     for word in post_text_array:
         try:
-            topic_querySet = Topics.objects.get(aliases__icontains=word)
-            if topic_querySet.context not in found_topics:
-                found_topics.append(topic_querySet.context)
+            if len(word) > 1:
+                topic_querySet = Topics.objects.get(aliases__icontains=word)
+                if topic_querySet.context not in found_topics:
+                    found_topics.append(topic_querySet.context)
         except Topics.DoesNotExist:
             print("no topic found")
     return found_topics
