@@ -56,7 +56,7 @@ def find_helpful_links(found_topics, user_request_array):
                     if len(answer_querySet) > 0:
                         for answer in answer_querySet:
                             if answer.resource not in answer_list:
-                                answer_list.append(answer_querySet.resource)
+                                answer_list.append(answer.resource)
                 except AnswersDatabase.DoesNotExist:
                     print("no value found")
     return answer_list
@@ -81,7 +81,7 @@ def find_topics(post_text_array):
                 if len(topic_querySet) > 0:
                     for each_topic in topic_querySet:
                         if each_topic.context not in found_topics:
-                            found_topics.append(topic_querySet.context)
+                            found_topics.append(each_topic.context)
             print(found_topics)
         except Topics.DoesNotExist:
             print("no topic found")
