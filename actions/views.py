@@ -63,7 +63,7 @@ def find_helpful_links(found_topics, user_request_array):
 def respond_from_bot(bot_answer, topic, slack_client, slack_channel, time_stamp):
     if len(bot_answer) != 0:
         slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text="Context recognized: "+ topic)
-        slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text=bot_answer.replace('"', "").strip("[]"))
+        slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text="Answer selected: "+ bot_answer)
     else:
         answer_msg = "We didn't find a helpful link for your question regarding "+ topic + " sorry."
         slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text=answer_msg)
