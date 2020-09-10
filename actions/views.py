@@ -28,7 +28,6 @@ def event_hook(request):
                 #look for topic nouns
                 found_topics = find_topics(words)
                 if len(found_topics) > 0:
-                    print(found_topics)
                     #build array of helpful links based on the key word
                     answer_msg = find_helpful_links(found_topics, words)
                     # answer given by bot
@@ -51,7 +50,7 @@ def find_helpful_links(found_topics, user_request_array):
         if len(each_word) >1 :
             try:
                 print(each_word)
-                answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics).filter(keywords__icontains=each_word)
+                answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics.strip()).filter(keywords__icontains=each_word.strip())
                 print(answer_querySet)
                 print(len(answer_querySet))
                 if len(answer_querySet) > 0:
@@ -77,9 +76,10 @@ def find_topics(post_text_array):
     for word in post_text_array:
         try:
             if len(word) > 1:
-                topic_querySet = Topics.objects.get(aliases__icontains=word)
+                topic_querySet = Topics.objects.get(aliases__icontains=word.strip())
                 if topic_querySet.context not in found_topics:
                     found_topics.append(topic_querySet.context)
+                    print(found_topics)
         except Topics.DoesNotExist:
             print("no topic found")
     return found_topics
