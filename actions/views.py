@@ -6,7 +6,7 @@ from django.core import exceptions
 import json
 import slack
 
-from .models import SlackPost, AnswersDatabase
+from .models import SlackPost, AnswersDatabase, Topics
 
 
 
@@ -25,13 +25,16 @@ def event_hook(request):
             if(user != 'U01ACS227RS'):
                 message_timestamp, channel, text = gather_message_data(event_msg)
                 words = text.split(" ")
-                answer_msg = []
-                #build array of helpful links based on the key word
-                answer_msg = find_helpful_links(words, answer_msg)
                 #log the user question
                 SlackPost.objects.get_or_create(user_request= text)
-                # answer given by bot
-                respond_from_bot(answer_msg, client, channel, message_timestamp)
+                #look for topic nouns
+                found_topics = find_topics(words)
+                if len(found_topics) > 0:
+                    #build array of helpful links based on the key word
+                    answer_msg = find_helpful_links(found_topics, words)
+                    # answer given by bot
+                    if len(answer_msg) > 0:
+                        respond_from_bot(answer_msg, str(found_topics[0]), client, channel, message_timestamp)
     return HttpResponse(status=200)
 def respond_to_subscription_challenge(json_dict, request):
     json_dict = json.loads(request.body.decode('utf-8'))
@@ -41,23 +44,24 @@ def respond_to_subscription_challenge(json_dict, request):
         if json_dict['type'] == 'url_verification':
             response_dict = {"challenge": json_dict['challenge']}
             return JsonResponse(response_dict, safe=False)
-def find_helpful_links(user_request_keyword_array, answer_list):
+def find_helpful_links(found_topics, user_request_array, answer_list):
     #TODO - exclude single letter searches, and catch MultipleObjectsReturned
-    for each_word in user_request_keyword_array:
+    answer_list = []
+    for each_word in user_request_array:
         try:
             print(each_word)
-            helpful_links = AnswersDatabase.objects.get(keywords__icontains=each_word)
-            print(helpful_links)
-            if helpful_links.resource not in answer_list:
-                answer_list.append(helpful_links.resource)
+            answer_querySet = AnswersDatabase.objects.filter(context__icontains=found_topics).filter(keywords__icontains=each_word)
+            print(answer)
+            if answer_querySet.resource not in answer_list:
+                answer_list.append(answer_querySet.resource)
         except AnswersDatabase.DoesNotExist:
             print("no value found")
     return answer_list
-def respond_from_bot(bot_answer, slack_client, slack_channel, time_stamp):
+def respond_from_bot(bot_answer, topic, slack_client, slack_channel, time_stamp):
     if len(bot_answer) != 0:
         slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text=bot_answer)
     else:
-        answer_msg = "We didn't find a helpful link for your query, sorry"
+        answer_msg = "We didn't find a helpful link for your question regarding {topic}, sorry"
         slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text=answer_msg)
     return HttpResponse(status=200)
 def gather_message_data(message_json):
@@ -65,5 +69,13 @@ def gather_message_data(message_json):
     channel = message_json['channel']
     text = message_json['text'].lower().strip()
     return message_timestamp, channel, text
-
-
+def find_topics(post_text_array):
+    found_topics = []
+    for word in post_text_array:
+        try:
+            topic_querySet = Topics.objects.get(aliases__icontains=word)
+            if topic_querySet.context not in found_topics:
+                found_topics.append(topic_querySet.context)
+        except Topics.DoesNotExist:
+            print("no topic found")
+    return found_topics

@@ -5,3 +5,4 @@ from .models import *
 
 admin.site.register(SlackPost)
 admin.site.register(AnswersDatabase)
+admin.site.register(Topics)
