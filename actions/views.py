@@ -46,6 +46,7 @@ def respond_to_subscription_challenge(json_dict, request):
             return JsonResponse(response_dict, safe=False)
 def find_helpful_links(found_topics, user_request_array):
     #TODO - exclude single letter searches, and catch MultipleObjectsReturned
+    #TODO - exclude common filler words - junk words
     answer_list = []
     for each_topic in found_topics:
         for each_word in user_request_array:
@@ -70,6 +71,7 @@ def respond_from_bot(bot_answer, topic, slack_client, slack_channel, time_stamp)
         slack_client.chat_postMessage(channel=slack_channel, thread_ts= time_stamp, text=answer_msg)
     return HttpResponse(status=200)
 def gather_message_data(message_json):
+    #TODO: Remove punctuation from the incomming message
     message_timestamp = message_json['ts']
     channel = message_json['channel']
     text = message_json['text'].lower().strip()
