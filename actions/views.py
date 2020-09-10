@@ -78,7 +78,7 @@ def find_topics(post_text_array):
     found_topics = []
     for word in post_text_array:
         try:
-            if len(word) > 1:
+            if len(word) > 2:
                 topic_querySet = Topics.objects.filter(aliases__icontains=word.strip())
                 if len(topic_querySet) > 0:
                     for each_topic in topic_querySet:
